@@ -1985,7 +1985,7 @@ void SV_FullUpdate_f(void)
 		return;
 	}
 
-	if (host_client->active)
+	if (host_client->active && host_client->edict)
 	{
 		entIndex = IndexOfEdict(host_client->edict);
 		if (s_LastFullUpdate[entIndex] > g_psv.time)
