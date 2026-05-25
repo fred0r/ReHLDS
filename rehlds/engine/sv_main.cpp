@@ -1321,7 +1321,7 @@ void SV_WriteClientdataToMessage(client_t *client, sizebuf_t *msg)
 
 	DELTA_WriteDelta((byte *)from, (byte *)to, TRUE, (delta_t *)g_pclientdelta, NULL);
 
-	if (host_client->lw && gEntityInterface.pfnGetWeaponData(host_client->edict, frame->weapondata))
+	if (host_client->edict && host_client->lw && gEntityInterface.pfnGetWeaponData(host_client->edict, frame->weapondata))
 	{
 		weapon_data_t wbaseline;
 		Q_memset(&wbaseline, 0, sizeof(wbaseline));
