@@ -205,7 +205,7 @@ void SV_ParseConsistencyResponse(client_t *pSenderClient)
 #ifdef REHLDS_FIXES
 		dropmessage[0] = '\0';
 
-		if (gEntityInterface.pfnInconsistentFile(host_client->edict, g_rehlds_sv.resources[c - 1].szFileName, dropmessage))
+		if (host_client->edict && gEntityInterface.pfnInconsistentFile(host_client->edict, g_rehlds_sv.resources[c - 1].szFileName, dropmessage))
 		{
 			if (dropmessage[0])
 				SV_ClientPrintf("%s", dropmessage);
@@ -214,7 +214,7 @@ void SV_ParseConsistencyResponse(client_t *pSenderClient)
 			return;
 		}
 #else // REHLDS_FIXES
-		if (gEntityInterface.pfnInconsistentFile(host_client->edict, g_psv.resourcelist[c - 1].szFileName, dropmessage))
+		if (host_client->edict && gEntityInterface.pfnInconsistentFile(host_client->edict, g_psv.resourcelist[c - 1].szFileName, dropmessage))
 		{
 			if (Q_strlen(dropmessage) > 0)
 				SV_ClientPrintf("%s", dropmessage);
