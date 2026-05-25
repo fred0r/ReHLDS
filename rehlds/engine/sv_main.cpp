@@ -4857,11 +4857,15 @@ void EXT_FUNC SV_EmitPings_internal(client_t *client, sizebuf_t *msg)
 
 void SV_WriteEntitiesToClient(client_t *client, sizebuf_t *msg)
 {
+	edict_t *cl_edict = client->edict;
+	if (!cl_edict)
+		return;
+
 	client_frame_t *frame = &client->frames[SV_UPDATE_MASK & client->netchan.outgoing_sequence];
 
 	unsigned char *pvs = NULL;
 	unsigned char *pas = NULL;
-	gEntityInterface.pfnSetupVisibility((edict_t*)client->pViewEntity, client->edict, &pvs, &pas);
+	gEntityInterface.pfnSetupVisibility((edict_t*)client->pViewEntity, cl_edict, &pvs, &pas);
 	unsigned char *pSet = pvs;
 
 	packet_entities_t *pack = &frame->entities;
@@ -4889,7 +4893,7 @@ void SV_WriteEntitiesToClient(client_t *client, sizebuf_t *msg)
 		if ((!cl->active && !cl->spawned) || cl->proxy)
 			continue;
 
-		qboolean add = gEntityInterface.pfnAddToFullPack(&curPack->entities[curPack->num_entities], e, &g_psv.edicts[e], host_client->edict, flags, TRUE, pSet);
+		qboolean add = gEntityInterface.pfnAddToFullPack(&curPack->entities[curPack->num_entities], e, &g_psv.edicts[e], cl_edict, flags, TRUE, pSet);
 		if (add)
 			++curPack->num_entities;
 	}
@@ -4908,12 +4912,12 @@ void SV_WriteEntitiesToClient(client_t *client, sizebuf_t *msg)
 		//Part of gamedll's code is moved here to decrease amount of calls to AddToFullPack()
 		//We don't even try to transmit entities without model as well as invisible entities
 		if (ent->v.modelindex && !(ent->v.effects & EF_NODRAW)) {
-			qboolean add = gEntityInterface.pfnAddToFullPack(&curPack->entities[curPack->num_entities], e, &g_psv.edicts[e], host_client->edict, flags, FALSE, pSet);
+			qboolean add = gEntityInterface.pfnAddToFullPack(&curPack->entities[curPack->num_entities], e, &g_psv.edicts[e], cl_edict, flags, FALSE, pSet);
 			if (add)
 				++curPack->num_entities;
 		}
 #else
-		qboolean add = gEntityInterface.pfnAddToFullPack(&curPack->entities[curPack->num_entities], e, &g_psv.edicts[e], host_client->edict, flags, FALSE, pSet);
+		qboolean add = gEntityInterface.pfnAddToFullPack(&curPack->entities[curPack->num_entities], e, &g_psv.edicts[e], cl_edict, flags, FALSE, pSet);
 		if (add)
 			++curPack->num_entities;
 #endif //REHLDS_OPT_PEDANTIC
